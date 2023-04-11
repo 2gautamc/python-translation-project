@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-import sys
+import sys, re
 
 def translate_sequence(rna_sequence, genetic_code):
     """Translates a sequence of RNA into a sequence of amino acids.
@@ -45,9 +45,10 @@ def translate_sequence(rna_sequence, genetic_code):
                 break
             amino += genetic_code[rna]
             i += 3
+        else:
+            i += 3
 
     return amino
-
 
 def get_all_translations(rna_sequence, genetic_code):
     """Get a list of all amino acid sequences encoded by an RNA sequence.
@@ -80,7 +81,21 @@ def get_all_translations(rna_sequence, genetic_code):
         A list of strings; each string is an sequence of amino acids encoded by
         `rna_sequence`.
     """
-    pass
+    amino = []
+    rna = ''
+    rna_sequence = rna_sequence.upper()
+    match = re.search('AUG', rna_sequence)
+    if match:
+        rna = rna_sequence[match.span()[0]:]
+    else:
+        return ''
+    
+    amino.append(translate_sequence(rna, genetic_code))
+    amino.append(translate_sequence(rna[1:], genetic_code))
+    amino.append(translate_sequence(rna[2:], genetic_code))
+
+    return amino
+
 
 def get_reverse(sequence):
     """Reverse orientation of `sequence`.
@@ -195,5 +210,6 @@ if __name__ == '__main__':
     # if longest_peptide == "MYWHATAPYTHQNISTA":
     #     sys.stdout.write("Indeed.\n")
 
-    rna_seq = ('GUCGAACGAA')
-    print(translate_sequence(rna_seq, genetic_code))
+    rna_seq = ('ccugaaugacguacguaugacugcaguacguuacguacg')
+    # print(translate_sequence(rna_seq, genetic_code))
+    print(get_all_translations(rna_seq, genetic_code))
