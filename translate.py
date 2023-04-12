@@ -82,18 +82,17 @@ def get_all_translations(rna_sequence, genetic_code):
         `rna_sequence`.
     """
     amino = []
-    rna = ''
-    rna_sequence = rna_sequence.upper()
-    match = re.search('AUG', rna_sequence)
-    if match:
-        rna = rna_sequence[match.span()[0]:]
-    else:
-        return ''
-    
-    amino.append(translate_sequence(rna, genetic_code))
-    amino.append(translate_sequence(rna[1:], genetic_code))
-    amino.append(translate_sequence(rna[2:], genetic_code))
+    rna = rna_sequence.upper()
+    i = 0
 
+    while i < 3:
+        match = re.search('AUG', rna[i:])
+        if match:
+            rna = rna[i:][match.span()[0]:]
+            amino.append(translate_sequence(rna, genetic_code))
+        elif i == 0:
+            return []
+        i += 1
     return amino
 
 
@@ -210,6 +209,6 @@ if __name__ == '__main__':
     # if longest_peptide == "MYWHATAPYTHQNISTA":
     #     sys.stdout.write("Indeed.\n")
 
-    rna_seq = ('ccugaaugacguacguaugacugcaguacguuacguacg')
+    rna_seq = ('CCUGAAUGACGUACGUAUGACUGCAGUACGUUACGUACG')
     # print(translate_sequence(rna_seq, genetic_code))
     print(get_all_translations(rna_seq, genetic_code))
